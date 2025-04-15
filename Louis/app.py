@@ -102,8 +102,12 @@ class CampusMap:
         #class menue classes
         yourClasses = ["CS 150 King 101", "Math 210 King 232", "History 108 King 343", "Philosophy 101 King 233"]
         for i in range(4):
-            currClassLable = tkinter.Label(self.class_menu, text=yourClasses[i])
+            currClassLable = tkinter.Label(self.class_menu, text=yourClasses[i], font=("Times New Roman", 50, ""))
             currClassLable.grid(row=i, column=0, columnspan=5)
+            curr_edit_lable = tkinter.Label(self.class_menu, image=self.edit_icon)
+            curr_edit_lable.grid(row=i, column=6)
+            curr_deleat_lable = tkinter.Label(self.class_menu, image=self.delete_icon)
+            curr_deleat_lable.grid(row=i, column=7)
 
 
         #take me to my next event
