@@ -2,6 +2,9 @@ import tkinter
 from PIL import Image, ImageTk
 import tkintermapview
 
+
+
+
 class CampusMap:
     def __init__(self):
         self.width = 405
@@ -22,7 +25,10 @@ class CampusMap:
         self.close_btn_img = ImageTk.PhotoImage(Image.open("close_button.png"))
         self.locations_btn_img = ImageTk.PhotoImage(Image.open("my_locations.png"))
         self.next_btn_img = ImageTk.PhotoImage(Image.open("next_event.png"))
-        self.search_bar_img= ImageTk.PhotoImage(Image.open("search_bar.png"))
+        self.search_bar_img = ImageTk.PhotoImage(Image.open("search_bar.png"))
+        self.class_menu_img = ImageTk.PhotoImage(Image.open("class_menu.png"))
+        self.edit_icon = ImageTk.PhotoImage(Image.open("edit_icon.png"))
+        self.delete_icon = ImageTk.PhotoImage(Image.open("delete_icon.png"))
 
     def setup_map(self):
         self.map_widget = tkintermapview.TkinterMapView(
@@ -85,6 +91,21 @@ class CampusMap:
         self.my_locations_btn.place(relx=0.5, rely=0.35, anchor=tkinter.CENTER)
         self.my_locations_btn.bind("<Button-1>", lambda e: self.locations())
 
+        #class menu
+        self.class_menu = tkinter.Frame( 
+            self.root,
+            #image=self.class_menu_img,
+            bg="white",
+            width = self.class_menu_img.width(),
+            height = self.class_menu_img.height(),
+        )
+        #class menue classes
+        yourClasses = ["CS 150 King 101", "Math 210 King 232", "History 108 King 343", "Philosophy 101 King 233"]
+        for i in range(4):
+            currClassLable = tkinter.Label(self.class_menu, text=yourClasses[i])
+            currClassLable.grid(row=i, column=0, columnspan=5)
+
+
         #take me to my next event
         self.next_event_btn = tkinter.Label(
             self.submenu,
@@ -127,6 +148,10 @@ class CampusMap:
     def locations(self):
         print("Open Locations Menu")
         self.close_submenu()
+        self.class_menu.place(relx=.5, rely=.15, anchor=tkinter.N)
+        #self.class_menu.pack()
+
+        
 
     def next_class(self):
         print("Start Navigation for Next Event")
