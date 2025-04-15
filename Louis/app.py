@@ -9,10 +9,12 @@ class CampusMap:
         self.root = tkinter.Tk()
         self.root.geometry(f"{self.width}x{self.height}")
         self.submenu_visible = False
+        self.root.bind_all("<Button-1>", lambda e: e.widget.focus_set())
 
         self.load_assets()
         self.setup_map()
         self.create_ui()
+        self.search_setup()
 
     def load_assets(self):
         self.menu_btn_img = ImageTk.PhotoImage(Image.open("menu_button.png"))
@@ -32,6 +34,8 @@ class CampusMap:
         self.map_widget.pack(fill="both", expand=True)
         self.map_widget.set_position(41.295741, -82.22184)
         self.map_widget.set_zoom(18)
+        self.valid_locations = ["Barrows Hall", "Peters Hall","Kade Haus", "Keep Cottage", "Khan Hall", "Knowlton", "King Building"]
+
 
 
     def create_ui(self):
@@ -90,20 +94,34 @@ class CampusMap:
         self.next_event_btn.place(relx=0.5, rely=0.7, anchor=tkinter.CENTER)
         self.next_event_btn.bind("<Button-1>", lambda e: self.next_class())
 
-        #search bar
-        self.search_bar = tkinter.Label(
+    def search_setup(self):
+        self.search_bar_frame = tkinter.Frame(
             self.root,
-            image=self.search_bar_img,
+            bg="white",
+            bd=0,
+            width=60,
         )
-        self.search_bar.place(relx = 0.5, rely= 0.1, anchor=tkinter.CENTER)
+        self.search_bar_frame.place(relx=0.5, rely=0.1, anchor=tkinter.CENTER)
+
+        self.search_bar = tkinter.Label(
+            self.search_bar_frame,
+            image=self.search_bar_img,
+            bd=0,
+        )
+        self.search_bar.pack()
+        self.searchbox = tkinter.Entry(self.root, font=("",20))
+        self.searchbox.bind("<Button-1>", lambda e: (self.search()))
+        self.searchbox.place(relx=0.57, rely=0.1,width = 180, anchor=tkinter.CENTER)
 
     def open_submenu(self):
         self.menu.place_forget() #hide the menu button
         self.submenu.place(x=205, y=550, anchor=tkinter.CENTER)
+        self.map_widget.focus_set()
         self.root.update_idletasks() #for button responsiveness
     
     def close_submenu(self):
         self.submenu.place_forget() 
+        self.map_widget.focus_set()
         self.root.update_idletasks()
 
     def locations(self):
@@ -114,5 +132,62 @@ class CampusMap:
         print("Start Navigation for Next Event")
         self.close_submenu()
 
+    def search(self):
+        self.search_has_focus = True
+        self.root.update_idletasks()
+        if not hasattr(self, 'listbox'):
+            self.listbox = tkinter.Listbox(self.root, width=60, font=("", 20))
+            self.listbox.place(relx=0.5, rely=0.14, width=259, height=125, anchor=tkinter.N)
+
+            self.listbox.bind("<FocusOut>", lambda e: self.listbox_focus_out())
+            self.listbox.bind("<Button-1>", lambda e: self.listbox_focus())
+            self.listbox.bind("<<ListboxSelect>>", self.fillout)
+
+            self.searchbox.bind("<FocusOut>", lambda e: self.search_focus_out())
+            self.searchbox.bind("<KeyRelease>", self.check)
+        #Autofill Suggestions
+
+    def update(self, data):
+        self.listbox.delete(0, tkinter.END)
+        for item in data:
+            self.listbox.insert(tkinter.END, item)
+    
+    def fillout(self, e):
+        selection = self.listbox.curselection()
+        if selection:
+            index = selection[0]
+            selected_text = self.listbox.get(index)
+            self.searchbox.delete(0, tkinter.END)
+            self.searchbox.insert(0, selected_text)
+            self.listbox.place_forget()
+            self.map_widget.focus_set()
+
+    def check(self, e):
+        typed= self.searchbox.get()
+
+        if not hasattr(self, 'listbox') or not self.listbox.winfo_ismapped():
+            self.listbox.place(relx=0.5, rely=0.14, width=259, height=125, anchor=tkinter.N)
+
+        data=[]
+        for item in self.valid_locations:
+            if typed.lower() in item.lower():
+                data.append(item)
+        self.update(data)
+
+
+    def listbox_focus(self):
+        self.listbox_has_focus = True
+
+    def search_focus_out(self):
+        if not self.listbox_has_focus:
+            self.listbox.place_forget()
+        self.search_has_focus = False
+
+    def listbox_focus_out(self):
+        if not self.search_has_focus:
+            self.listbox.place_forget()
+        self.listbox_has_focus = False
+
 app = CampusMap()
 app.root.mainloop()
+
