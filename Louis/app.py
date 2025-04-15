@@ -26,6 +26,10 @@ class CampusMap:
         self.close_btn_img = ImageTk.PhotoImage(Image.open("close_button.png"))
         self.locations_btn_img = ImageTk.PhotoImage(Image.open("my_locations.png"))
         self.next_btn_img = ImageTk.PhotoImage(Image.open("next_event.png"))
+        self.search_bar_img= ImageTk.PhotoImage(Image.open("search_bar.png"))
+        self.navigation_img= ImageTk.PhotoImage(Image.open("navigation.png"))
+        self.marker_img= ImageTk.PhotoImage(Image.open("self_marker.png"))
+        self.navbar_img= ImageTk.PhotoImage(Image.open("nav_bar.png"))
         self.search_bar_img = ImageTk.PhotoImage(Image.open("search_bar.png"))
         self.class_menu_img = ImageTk.PhotoImage(Image.open("class_menu.png"))
         self.edit_icon = ImageTk.PhotoImage(Image.open("edit_icon.png"))
@@ -42,6 +46,7 @@ class CampusMap:
         self.map_widget.set_position(41.295741, -82.22184)
         self.map_widget.set_zoom(18)
         self.valid_locations = ["Barrows Hall", "Peters Hall","Kade Haus", "Keep Cottage", "Khan Hall", "Knowlton", "King Building"]
+        self.marker=self.map_widget.set_marker(41.295728, -82.221735, icon=self.marker_img)
 
 
 
@@ -177,6 +182,8 @@ class CampusMap:
         self.close_class_menu()
         self.go_To_Class(chosesClass)
 
+        self.close_submenu()
+        self.navigate()
 
     def search(self):
         self.search_has_focus = True
@@ -207,6 +214,9 @@ class CampusMap:
             self.searchbox.insert(0, selected_text)
             self.listbox.place_forget()
             self.map_widget.focus_set()
+            if selected_text == "King Building":
+                self.navigate()
+            #else: display work in progress screen
 
     def check(self, e):
         typed= self.searchbox.get()
@@ -238,11 +248,30 @@ class CampusMap:
         print("presed Nuke")
         
 
+        
+
+    def navigate(self):
+        self.search_bar_frame.place_forget()
+        self.king=self.map_widget.set_marker(41.29225950788716, -82.22067847961983, text="King Building")
+        self.map_widget.set_position(41.2939542, -82.2211778)
+        self.map_widget.set_zoom(17)
+        path_1 = self.map_widget.set_path([self.marker.position, (41.2954777, -82.2214728), (41.2953729, -82.2215587), (41.2937607, -82.2215265), (41.2934383, -82.2210651), (41.2924307, -82.2211081), self.king.position,])
+        self.navbar_frame=tkinter.Frame(self.root, width=400, height=200, bg="white")
+        self.navbar=tkinter.Label(
+            self.navbar_frame,
+            image=self.navbar_img,
+            bd=0
+        )
+        self.navbar.pack()
+        self.navbar_frame.place(relx=0.5, rely=0.1, anchor=tkinter.CENTER)
+        1=1
+
+
+
 class Event:
     def __init__(self, description, location):
         self.description = description
         self.location = location
-        
 
 
 
