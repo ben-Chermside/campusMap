@@ -2,6 +2,9 @@ import tkinter
 from PIL import Image, ImageTk
 import tkintermapview
 
+
+
+
 class CampusMap:
     def __init__(self):
         self.width = 405
@@ -26,6 +29,10 @@ class CampusMap:
         self.navigation_img= ImageTk.PhotoImage(Image.open("navigation.png"))
         self.marker_img= ImageTk.PhotoImage(Image.open("self_marker.png"))
         self.navbar_img= ImageTk.PhotoImage(Image.open("nav_bar.png"))
+        self.search_bar_img = ImageTk.PhotoImage(Image.open("search_bar.png"))
+        self.class_menu_img = ImageTk.PhotoImage(Image.open("class_menu.png"))
+        self.edit_icon = ImageTk.PhotoImage(Image.open("edit_icon.png"))
+        self.delete_icon = ImageTk.PhotoImage(Image.open("delete_icon.png"))
 
     def setup_map(self):
         self.map_widget = tkintermapview.TkinterMapView(
@@ -89,6 +96,25 @@ class CampusMap:
         self.my_locations_btn.place(relx=0.5, rely=0.35, anchor=tkinter.CENTER)
         self.my_locations_btn.bind("<Button-1>", lambda e: self.locations())
 
+        #class menu
+        self.class_menu = tkinter.Frame( 
+            self.root,
+            #image=self.class_menu_img,
+            bg="white",
+            width = self.class_menu_img.width(),
+            height = self.class_menu_img.height(),
+        )
+        #class menue classes
+        yourClasses = ["CS 150 King 101", "Math 210 King 232", "History 108 King 343", "Philosophy 101 King 233"]
+        for i in range(4):
+            currClassLable = tkinter.Label(self.class_menu, text=yourClasses[i], font=("Times New Roman", 50, ""))
+            currClassLable.grid(row=i, column=0, columnspan=5)
+            curr_edit_lable = tkinter.Label(self.class_menu, image=self.edit_icon)
+            curr_edit_lable.grid(row=i, column=6)
+            curr_deleat_lable = tkinter.Label(self.class_menu, image=self.delete_icon)
+            curr_deleat_lable.grid(row=i, column=7)
+
+
         #take me to my next event
         self.next_event_btn = tkinter.Label(
             self.submenu,
@@ -131,6 +157,10 @@ class CampusMap:
     def locations(self):
         print("Open Locations Menu")
         self.close_submenu()
+        self.class_menu.place(relx=.5, rely=.15, anchor=tkinter.N)
+        #self.class_menu.pack()
+
+        
 
     def next_class(self):
         print("Start Navigation for Next Event")

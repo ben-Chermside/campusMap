@@ -10,9 +10,23 @@ def callback():
     message = tk.Label(root, text="Hello, World!")
     message.pack()
     
+
+def firstButton():
+    print("first button clicked")
+
+
 def openMenu():
     canvas.create_rectangle(((canviseSize[0]//2) - (min(canviseSize[0], 500)//2), 0), (min(canviseSize[0], 500), min(canviseSize[1], 900)), fill='white', tags="menu")
     canvas.lift("menu")
+    firstButton = ttk.Button(
+    canvas,
+    text="This goes to the first button",
+    command=openMenu,
+    width=min(canviseSize[0], 500)-10,
+    #height=100,
+    )
+    canvas.create_window(((canviseSize[0]//2) - (min(canviseSize[0], 500)//2)+10, 5), window=firstButton, anchor="nw")
+    canvas.create_rectangle(((canviseSize[0]//2) - (min(canviseSize[0], 500)//2)+5, 0), (min(canviseSize[0], 500)-10, 100), fill="white", tags="topButton")
 
 root = tk.Tk()
 
