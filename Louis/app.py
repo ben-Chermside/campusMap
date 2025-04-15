@@ -2,6 +2,7 @@ import tkinter
 from PIL import Image, ImageTk
 import tkintermapview
 
+#import eventClass
 
 
 
@@ -100,14 +101,17 @@ class CampusMap:
             height = self.class_menu_img.height(),
         )
         #class menue classes
-        yourClasses = ["CS 150 King 101", "Math 210 King 232", "History 108 King 343", "Philosophy 101 King 233"]
+        your_events = (Event("CS 150 King 101", "King Building"), Event("CS 150 King 101", "King Building"), Event("Math 210 King 232", "peters Hall"), Event("History 108 Peters Hall 102", "King Building"))#touple, cause I want it to be immutable
+        #classDestinations = ("king", "king", "peters", "king")#note when you want to create the navagation system, this is where you put the data you need passed into your function to navagate
         for i in range(4):
-            currClassLable = tkinter.Label(self.class_menu, text=yourClasses[i], font=("Times New Roman", 50, ""))
+            currClassLable = tkinter.Label(self.class_menu, text=your_events[i].description, font=("Times New Roman", 50, ""))
             currClassLable.grid(row=i, column=0, columnspan=5)
+            currClassLable.bind("<Button-1>", lambda interactEvent : self.selectedClass(your_events[i]))
             curr_edit_lable = tkinter.Label(self.class_menu, image=self.edit_icon)
             curr_edit_lable.grid(row=i, column=6)
             curr_deleat_lable = tkinter.Label(self.class_menu, image=self.delete_icon)
             curr_deleat_lable.grid(row=i, column=7)
+            curr_deleat_lable.bind("<Button-1>", lambda interactEvent : self.pressed_deleat_class(your_events[i]))
 
 
         #take me to my next event
@@ -148,6 +152,10 @@ class CampusMap:
         self.submenu.place_forget() 
         self.map_widget.focus_set()
         self.root.update_idletasks()
+    
+    def close_class_menu(self):
+        print("opened forget function")
+        self.class_menu.place_forget()
 
     def locations(self):
         print("Open Locations Menu")
@@ -155,11 +163,20 @@ class CampusMap:
         self.class_menu.place(relx=.5, rely=.15, anchor=tkinter.N)
         #self.class_menu.pack()
 
-        
+    def go_To_Class(self, class_to_navigate):
+        print("Start Navigation for Next Event", class_to_navigate)
+        #TODO buld navagation feture
 
     def next_class(self):
-        print("Start Navigation for Next Event")
+        # print("Start Navigation for Next Event")
+        # self.close_submenu()
         self.close_submenu()
+        self.go_To_Class(None)#TODO buld and store what the "next class" is somewhere
+
+    def selectedClass(self, chosesClass):#for when the user selects a spsific class they wish to travel to
+        self.close_class_menu()
+        self.go_To_Class(chosesClass)
+
 
     def search(self):
         self.search_has_focus = True
@@ -216,6 +233,18 @@ class CampusMap:
         if not self.search_has_focus:
             self.listbox.place_forget()
         self.listbox_has_focus = False
+
+    def pressed_deleat_class(self, event):
+        print("presed Nuke")
+        
+
+class Event:
+    def __init__(self, description, location):
+        self.description = description
+        self.location = location
+        
+
+
 
 app = CampusMap()
 app.root.mainloop()
