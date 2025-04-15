@@ -107,7 +107,8 @@ class CampusMap:
         )
         #class menue classes
         your_events = (Event("CS 150 King 101", "King Building"), Event("CS 150 King 101", "King Building"), Event("Math 210 King 232", "peters Hall"), Event("History 108 Peters Hall 102", "King Building"))#touple, cause I want it to be immutable
-        #classDestinations = ("king", "king", "peters", "king")#note when you want to create the navagation system, this is where you put the data you need passed into your function to navagate
+        self.your_events = your_events#a list of events that you have
+        self.ClassSelectedToDeleat = None#the last class that the user selected to deleat
         for i in range(4):
             currClassLable = tkinter.Label(self.class_menu, text=your_events[i].description, font=("Times New Roman", 50, ""))
             currClassLable.grid(row=i, column=0, columnspan=5)
@@ -127,6 +128,40 @@ class CampusMap:
         )
         self.next_event_btn.place(relx=0.5, rely=0.7, anchor=tkinter.CENTER)
         self.next_event_btn.bind("<Button-1>", lambda e: self.next_class())
+
+        #conferm class deleated menue
+        self.deleat_class_confermation = tkinter.Frame(
+            self.root,
+            bg="white",
+            width=380,
+            height= 200,
+        )
+        self.deleat_class_confermation.place()
+        self.deleat_class_confermation_text = tkinter.Label(
+            self.deleat_class_confermation,
+            text="are your sure you want to DELEAT this class?",
+            font=("Times New Roman", 50, ""),
+        )
+        self.deleat_class_confermation_text.grid(row=0, column=0)
+        self.deleat_class_confermation_yes_button = tkinter.Button(
+            self.deleat_class_confermation,
+            text="yes",
+            font=("Times New Roman", 50, ""),
+            command= lambda: self.deleat_class()
+        )
+        self.deleat_class_confermation_yes_button.grid(row=1, column=0)
+        self.deleat_class_confermation_no_button = tkinter.Button(
+            self.deleat_class_confermation,
+            text="no",
+            font=("Times New Roman", 50, ""),
+            command = lambda: self.close_confermation_window()
+        )
+        self.deleat_class_confermation_no_button.grid(row=2, column=0)
+
+
+
+
+
 
     def search_setup(self):
         self.search_bar_frame = tkinter.Frame(
@@ -159,11 +194,9 @@ class CampusMap:
         self.root.update_idletasks()
     
     def close_class_menu(self):
-        print("opened forget function")
         self.class_menu.place_forget()
 
     def locations(self):
-        print("Open Locations Menu")
         self.close_submenu()
         self.class_menu.place(relx=.5, rely=.15, anchor=tkinter.N)
         #self.class_menu.pack()
@@ -173,8 +206,6 @@ class CampusMap:
         #TODO buld navagation feture
 
     def next_class(self):
-        # print("Start Navigation for Next Event")
-        # self.close_submenu()
         self.close_submenu()
         self.go_To_Class(None)#TODO buld and store what the "next class" is somewhere
 
@@ -245,7 +276,20 @@ class CampusMap:
         self.listbox_has_focus = False
 
     def pressed_deleat_class(self, event):
-        print("presed Nuke")
+        """
+        for when the button thta openes the deleat a class windown is pressed, 
+        opens the confermation window
+        """
+        self.ClassSelectedToDeleat = event
+        self.deleat_class_confermation.place(relx=0.5, rely=0.4, anchor="center")
+
+    def deleat_class(self):#will deleat class in future
+        self.close_confermation_window()
+        #adding soon
+
+    def close_confermation_window(self):#closes the conermation window
+        self.deleat_class_confermation.place_forget()
+        
         
 
         
