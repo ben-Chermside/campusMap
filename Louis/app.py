@@ -163,8 +163,8 @@ class CampusMap:
         
 
     def next_class(self):
-        print("Start Navigation for Next Event")
         self.close_submenu()
+        self.navigate()
 
     def search(self):
         self.search_has_focus = True
