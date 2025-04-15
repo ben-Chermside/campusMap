@@ -106,7 +106,7 @@ class CampusMap:
             height = self.class_menu_img.height(),
         )
         #class menue classes
-        your_events = (Event("CS 150 King 101", "King Building"), Event("CS 150 King 101", "King Building"), Event("Math 210 King 232", "peters Hall"), Event("History 108 Peters Hall 102", "King Building"))#touple, cause I want it to be immutable
+        your_events = (Event("CS 150 King 101", "King Building", "9:00", "101", "mwf"), Event("CS 000 King 101", "King Building", "9:00", "101", "tt"), Event("Math 210 peters 232", "peters Hall", "10:00", "232", "mwf"), Event("History 108 Peters Hall 102", "peters Hall", "14:00", "102", "mwf"))#touple, cause I want it to be immutable
         self.your_events = your_events#a list of events that you have
         self.ClassSelectedToDeleat = None#the last class that the user selected to deleat
         for i in range(4):
@@ -115,6 +115,7 @@ class CampusMap:
             currClassLable.bind("<Button-1>", lambda interactEvent : self.selectedClass(your_events[i]))
             curr_edit_lable = tkinter.Label(self.class_menu, image=self.edit_icon)
             curr_edit_lable.grid(row=i, column=6)
+            curr_edit_lable.bind("<Button-1>", lambda interactEvent : self.edit_event(your_events[i]))
             curr_deleat_lable = tkinter.Label(self.class_menu, image=self.delete_icon)
             curr_deleat_lable.grid(row=i, column=7)
             curr_deleat_lable.bind("<Button-1>", lambda interactEvent : self.pressed_deleat_class(your_events[i]))
@@ -129,7 +130,7 @@ class CampusMap:
         self.next_event_btn.place(relx=0.5, rely=0.7, anchor=tkinter.CENTER)
         self.next_event_btn.bind("<Button-1>", lambda e: self.next_class())
 
-        #conferm class deleated menue
+        #confermation
         self.deleat_class_confermation = tkinter.Frame(
             self.root,
             bg="white",
@@ -157,6 +158,15 @@ class CampusMap:
             command = lambda: self.close_confermation_window()
         )
         self.deleat_class_confermation_no_button.grid(row=2, column=0)
+
+        #edit event page
+        self.editEventPage = tkinter.Frame(
+            self.root,
+            #self.root,
+            bg="black",
+            # width=380,
+            # height= 200,
+        )
 
 
 
@@ -198,7 +208,7 @@ class CampusMap:
 
     def locations(self):
         self.close_submenu()
-        self.class_menu.place(relx=.5, rely=.15, anchor=tkinter.N)
+        self.class_menu.place(relx=.5, rely=.15, anchor=tkinter.N, relwidth=.6, relheight=.7)
         #self.class_menu.pack()
 
     def go_To_Class(self, class_to_navigate):
@@ -289,6 +299,85 @@ class CampusMap:
 
     def close_confermation_window(self):#closes the conermation window
         self.deleat_class_confermation.place_forget()
+
+    def edit_event(self, event):
+        """
+        brings up screen that allows you to edit the event clicked on
+        """
+        print("funct edit event called")
+        self.close_class_menu()
+        self.event_name_lable = tkinter.Label(
+            self.editEventPage,
+            text="Name of Event:",
+            font=("Times New Roman", 40, ""),
+            borderwidth=6,
+        )
+        self.event_name_enter = tkinter.Entry(
+            self.editEventPage,
+            width=30
+        )
+        self.event_name_lable.grid(column=0, row=0)
+        self.event_name_enter.grid(row=0, column=1)
+
+
+        self.event_bulding_lable = tkinter.Label(
+            self.editEventPage,
+            text="Bulding:",
+            font=("Times New Roman", 40, ""),
+            borderwidth=6,
+        )
+        self.event_bulding_enter = tkinter.Entry(
+            self.editEventPage,
+            width=30
+        )
+        self.event_bulding_lable.grid(column=0, row=1)
+        self.event_bulding_enter.grid(row=1, column=1)
+
+        
+        self.event_room_number_lable = tkinter.Label(
+            self.editEventPage,
+            text="Room number:",
+            font=("Times New Roman", 40, ""),
+            borderwidth=6,
+        )
+        self.event_room_number_enter = tkinter.Entry(
+            self.editEventPage,
+            width=30
+        )
+        self.event_room_number_lable.grid(column=0, row=2)
+        self.event_room_number_enter.grid(row=2, column=1)
+
+        
+        self.event_time_lable = tkinter.Label(
+            self.editEventPage,
+            text="Time:",
+            font=("Times New Roman", 40, ""),
+            borderwidth=6,
+        )
+        self.event_time_enter = tkinter.Entry(
+            self.editEventPage,
+            width=30
+        )
+        self.event_time_lable.grid(column=0, row=3)
+        self.event_time_enter.grid(row=3, column=1)
+
+        
+        self.event_weekday_lable = tkinter.Label(
+            self.editEventPage,
+            text="Day of week:",
+            font=("Times New Roman", 40, ""),
+            borderwidth=6,
+        )
+        self.event_weekday_enter = tkinter.Entry(
+            self.editEventPage,
+            width=30
+        )
+        self.event_weekday_lable.grid(column=0, row=4)
+        self.event_weekday_enter.grid(row=4, column=1)
+        self.editEventPage.place(relx=.5, rely=.15, anchor="n", relheight=.7, relwidth=.5)
+
+        
+        
         
         
 
@@ -311,10 +400,13 @@ class CampusMap:
 
 
 
-class Event:
-    def __init__(self, description, location):
+class Event:#used for keeping track of information about a single event(class) in one place
+    def __init__(self, description, location, time, roomNumber, weekDay):
         self.description = description
         self.location = location
+        self.time = time
+        self.roomNumber = roomNumber
+        self.weekday = weekDay
 
 
 
