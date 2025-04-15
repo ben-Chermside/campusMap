@@ -264,7 +264,6 @@ class CampusMap:
         )
         self.navbar.pack()
         self.navbar_frame.place(relx=0.5, rely=0.1, anchor=tkinter.CENTER)
-        1=1
 
 
 
