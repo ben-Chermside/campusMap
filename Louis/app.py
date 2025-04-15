@@ -227,7 +227,7 @@ class CampusMap:
 
     def navigate(self):
         self.search_bar_frame.place_forget()
-        self.king=self.map_widget.set_marker(41.29225950788716, -82.22067847961983, text="King Building - 146")
+        self.king=self.map_widget.set_marker(41.29225950788716, -82.22067847961983, text="King Building")
         self.map_widget.set_position(41.2939542, -82.2211778)
         self.map_widget.set_zoom(17)
         path_1 = self.map_widget.set_path([self.marker.position, (41.2954777, -82.2214728), (41.2953729, -82.2215587), (41.2937607, -82.2215265), (41.2934383, -82.2210651), (41.2924307, -82.2211081), self.king.position,])
