@@ -105,6 +105,16 @@ class CampusMap:
             width = self.class_menu_img.width(),
             height = self.class_menu_img.height(),
         )
+        #close button
+        self.close_btn = tkinter.Label(
+            self.class_menu,
+            image=self.close_btn_img,
+            bd=0,
+            bg="white"
+        )
+        self.close_btn.place(relx=0.95, rely=0.05, anchor=tkinter.CENTER)
+        self.close_btn.bind("<Button-1>", lambda e: self.close_class_menu())
+        
         #class menue classes
         your_events = (Event("CS 150 King 101", "King Building", "9:00", "101", "mwf"), Event("CS 000 King 101", "King Building", "9:00", "101", "tt"), Event("Math 210 peters 232", "peters Hall", "10:00", "232", "mwf"), Event("History 108 Peters Hall 102", "peters Hall", "14:00", "102", "mwf"))#touple, cause I want it to be immutable
         self.your_events = your_events#a list of events that you have
@@ -206,6 +216,7 @@ class CampusMap:
     
     def close_class_menu(self):
         self.class_menu.place_forget()
+        self.menu.place(x=10, y=610)
 
     def locations(self):
         """
