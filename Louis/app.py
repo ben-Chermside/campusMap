@@ -214,9 +214,10 @@ class CampusMap:
         self.map_widget.focus_set()
         self.root.update_idletasks()
     
-    def close_class_menu(self):
+    def close_class_menu(self, show_menu_button=True):
         self.class_menu.place_forget()
-        self.menu.place(x=10, y=610)
+        if show_menu_button:
+            self.menu.place(x=10, y=610)
 
     def locations(self):
         """
@@ -380,7 +381,7 @@ class CampusMap:
         brings up screen that allows you to edit the event clicked on
         """
         print("funct edit event called")
-        self.close_class_menu()
+        self.close_class_menu(show_menu_button=False) #prevents menu from reappearing prematurely
         self.event_name_lable = tkinter.Label(
             self.editEventPage,
             text="Name of Event:",
