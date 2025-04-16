@@ -13,7 +13,7 @@ class CampusMap:
         self.root = tkinter.Tk()
         self.root.geometry(f"{self.width}x{self.height}")
         self.submenu_visible = False
-        self.root.bind_all("<Button-1>", lambda e: e.widget.focus_set())
+        self.root.bind_all("<Button-1>", lambda e: hasattr(e.widget, "focus_set") and e.widget.focus_set())
 
         self.load_assets()
         self.setup_map()
@@ -34,6 +34,7 @@ class CampusMap:
         self.class_menu_img = ImageTk.PhotoImage(Image.open("class_menu.png"))
         self.edit_icon = ImageTk.PhotoImage(Image.open("edit_icon.png"))
         self.delete_icon = ImageTk.PhotoImage(Image.open("delete_icon.png"))
+        self.navbar_x = ImageTk.PhotoImage(Image.open("navbar_x.png"))
 
     def setup_map(self):
         self.map_widget = tkintermapview.TkinterMapView(
@@ -290,17 +291,18 @@ class CampusMap:
     def go_To_Class(self, class_to_navigate):
         print("Start Navigation for Next Event", class_to_navigate)
         #TODO buld navagation feture
+        self.navigate() #goes to placeholder navigation
 
     def next_class(self):
         self.close_submenu()
         self.go_To_Class(None)#TODO buld and store what the "next class" is somewhere
 
     def selectedClass(self, chosesClass):#for when the user selects a spsific class they wish to travel to
-        self.close_class_menu()
+        self.close_class_menu(show_menu_button=False) #stops from reappearing hamburger menu too earlier
         self.go_To_Class(chosesClass)
 
         self.close_submenu()
-        self.navigate()
+        #self.navigate() already called in go_To_class
 
     def search(self):
         self.search_has_focus = True
@@ -521,7 +523,7 @@ class CampusMap:
         self.king=self.map_widget.set_marker(41.29225950788716, -82.22067847961983, text="King Building")
         self.map_widget.set_position(41.2939542, -82.2211778)
         self.map_widget.set_zoom(17)
-        path_1 = self.map_widget.set_path([self.marker.position, (41.2954777, -82.2214728), (41.2953729, -82.2215587), (41.2937607, -82.2215265), (41.2934383, -82.2210651), (41.2924307, -82.2211081), self.king.position,])
+        self.path_1 = self.map_widget.set_path([self.marker.position, (41.2954777, -82.2214728), (41.2953729, -82.2215587), (41.2937607, -82.2215265), (41.2934383, -82.2210651), (41.2924307, -82.2211081), self.king.position,])
         self.navbar_frame=tkinter.Frame(self.root, width=400, height=200, bg="white")
         self.navbar=tkinter.Label(
             self.navbar_frame,
@@ -529,8 +531,26 @@ class CampusMap:
             bd=0
         )
         self.navbar.pack()
+        #add invisible close button (x is already in image)
+        self.nav_close_btn = tkinter.Label(
+            self.navbar_frame,
+            image=self.navbar_x,
+            cursor="hand2"
+        )
+        self.nav_close_btn.place(relx=0.85, rely=0.5, anchor="center")
+        self.nav_close_btn.bind("<Button-1>", lambda e: self.close_navigation())
         self.navbar_frame.place(relx=0.5, rely=0.1, anchor=tkinter.CENTER)
 
+
+    #cleans up/closes sample navigation
+    def close_navigation(self):
+        self.navbar_frame.destroy()
+        if hasattr(self, "path_1"):
+            self.path_1.delete()
+        if hasattr(self, "king"):
+            self.king.delete()
+        self.menu.place(x=10, y=610)
+        self.search_bar_frame.place(relx=0.5, rely=0.1, anchor=tkinter.CENTER)
 
 
 class Event:#used for keeping track of information about a single event(class) in one place
