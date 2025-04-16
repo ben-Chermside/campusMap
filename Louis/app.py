@@ -232,9 +232,11 @@ class CampusMap:
         #create scroll canvas for classes
         canvas = tkinter.Canvas(self.class_menu, borderwidth=0, bg="white", highlightthickness=0)
         scroll_frame = tkinter.Frame(canvas, bg="white")
+        scroll_frame.columnconfigure(0, weight=1)
         scrollbar = tkinter.Scrollbar(self.class_menu, orient="vertical", command=canvas.yview)
         canvas.configure(yscrollcommand=scrollbar.set)
-        canvas.create_window((0, 0), window=scroll_frame, anchor="nw")
+        canvas_window = canvas.create_window((0, 0), window=scroll_frame, anchor="nw")
+        canvas.bind("<Configure>", lambda e: canvas.itemconfig(canvas_window, width=e.width))
         scroll_frame.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
         scroll_frame.bind_all("<MouseWheel>", lambda e: canvas.yview_scroll(int(-1 * (e.delta / 120)), "units"))
         canvas.pack(side="left", fill="both", expand=True)
@@ -242,6 +244,7 @@ class CampusMap:
         
         self.close_submenu()
         self.class_menu.place(relx=.5, rely=.15, anchor=tkinter.N, relwidth=.6, relheight=.7)
+        tkinter.Label(scroll_frame, text="", bg="white").grid(row=0, column=0, columnspan=8, pady=(30, 5)) #blank row for padding at top
         for i, event in enumerate(self.your_events):
             #class button
             label = tkinter.Label(
@@ -249,20 +252,19 @@ class CampusMap:
                 text=event.description,
                 font=("Times New Roman", 50, ""),
                 bg="white",
-                anchor="w",
-                width=25
+                anchor="w"
             )
-            label.grid(row=i, column=0, columnspan=5, sticky="w", padx=5, pady=2)
+            label.grid(row=i+1, column=0, columnspan=5, sticky="ew", padx=5, pady=2)
             label.bind("<Button-1>", lambda e, ev=event: self.selectedClass(ev))
 
             #edit button
             edit_btn = tkinter.Label(scroll_frame, image=self.edit_icon, bg="white")
-            edit_btn.grid(row=i, column=6, padx=5)
+            edit_btn.grid(row=i+1, column=6, padx=5)
             edit_btn.bind("<Button-1>", lambda e, ev=event: self.edit_event(ev))
 
             #deleat button
             delete_btn = tkinter.Label(scroll_frame, image=self.delete_icon, bg="white")
-            delete_btn.grid(row=i, column=7, padx=5)
+            delete_btn.grid(row=i+1, column=7, padx=5)
             delete_btn.bind("<Button-1>", lambda e, ev=event: self.pressed_deleat_class(ev))
             
         #add location button
