@@ -105,20 +105,19 @@ class CampusMap:
             width = self.class_menu_img.width(),
             height = self.class_menu_img.height(),
         )
-        #close button
-        self.close_btn = tkinter.Label(
-            self.class_menu,
-            image=self.close_btn_img,
-            bd=0,
-            bg="white"
-        )
-        self.close_btn.place(relx=0.95, rely=0.05, anchor=tkinter.CENTER)
-        self.close_btn.bind("<Button-1>", lambda e: self.close_class_menu())
+        
         
         #class menue classes
-        your_events = (Event("CS 150 King 101", "King Building", "9:00", "101", "mwf"), Event("CS 000 King 101", "King Building", "9:00", "101", "tt"), Event("Math 210 peters 232", "peters Hall", "10:00", "232", "mwf"), Event("History 108 Peters Hall 102", "peters Hall", "14:00", "102", "mwf"))#touple, cause I want it to be immutable
+        your_events = [
+            Event("CS 150 King 101", "King Building", "9:00", "101", "mwf"),
+            Event("CS 000 King 101", "King Building", "9:00", "101", "tt"),
+            Event("Math 210 peters 232", "peters Hall", "10:00", "232", "mwf"),
+            Event("History 108 Peters Hall 102", "peters Hall", "14:00", "102", "mwf")
+        ]#used list instead of touple (original ver) to make easier to add
         self.your_events = your_events#a list of events that you have
         self.ClassSelectedToDeleat = None#the last class that the user selected to deleat
+        #commented out to handle this dynamically in locations() (so easier to add new ones)
+        """
         for i in range(4):
             currClassLable = tkinter.Label(self.class_menu, text=your_events[i].description, font=("Times New Roman", 50, ""))
             self.__setattr__("class" + str(i) + "lable", currClassLable)
@@ -130,6 +129,7 @@ class CampusMap:
             curr_deleat_lable = tkinter.Label(self.class_menu, image=self.delete_icon)
             curr_deleat_lable.grid(row=i, column=7)
             curr_deleat_lable.bind("<Button-1>", lambda interactEvent, event=your_events[i]: self.pressed_deleat_class(event))
+        """
 
 
         #take me to my next event
@@ -222,10 +222,68 @@ class CampusMap:
         """
         displays the list of diffrent classes(assumes not alredy displayed)
         """
+        
+        #has to rebuild menu so new added classes are visible
+        for x in self.class_menu.winfo_children():
+            x.destroy()
+        
+        #create scroll canvas for classes
+        canvas = tkinter.Canvas(self.class_menu, borderwidth=0, bg="white", highlightthickness=0)
+        scroll_frame = tkinter.Frame(canvas, bg="white")
+        scrollbar = tkinter.Scrollbar(self.class_menu, orient="vertical", command=canvas.yview)
+        canvas.configure(yscrollcommand=scrollbar.set)
+        canvas.create_window((0, 0), window=scroll_frame, anchor="nw")
+        scroll_frame.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+        scroll_frame.bind_all("<MouseWheel>", lambda e: canvas.yview_scroll(int(-1 * (e.delta / 120)), "units"))
+        canvas.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
+        
         self.close_submenu()
         self.class_menu.place(relx=.5, rely=.15, anchor=tkinter.N, relwidth=.6, relheight=.7)
-        for i in range(4):
-            self.__getattribute__("class" + str(i) + "lable").config(text=self.your_events[i].description)
+        for i, event in enumerate(self.your_events):
+            #class button
+            label = tkinter.Label(
+                scroll_frame,
+                text=event.description,
+                font=("Times New Roman", 50, ""),
+                bg="white",
+                anchor="w",
+                width=25
+            )
+            label.grid(row=i, column=0, columnspan=5, sticky="w", padx=5, pady=2)
+            label.bind("<Button-1>", lambda e, ev=event: self.selectedClass(ev))
+
+            #edit button
+            edit_btn = tkinter.Label(scroll_frame, image=self.edit_icon, bg="white")
+            edit_btn.grid(row=i, column=6, padx=5)
+            edit_btn.bind("<Button-1>", lambda e, ev=event: self.edit_event(ev))
+
+            #deleat button
+            delete_btn = tkinter.Label(scroll_frame, image=self.delete_icon, bg="white")
+            delete_btn.grid(row=i, column=7, padx=5)
+            delete_btn.bind("<Button-1>", lambda e, ev=event: self.pressed_deleat_class(ev))
+            
+        #add location button
+        self.add_location_button = tkinter.Button(
+            self.class_menu,
+            text="+",
+            font=("Arial", 50),
+            bg="white",
+            bd=0,
+            command=self.add_event
+        )
+        self.add_location_button.place(relx=0.5, rely=0.95, anchor="center")
+        
+        #close menu button
+        self.close_btn = tkinter.Label(
+            self.class_menu,
+            image=self.close_btn_img,
+            bd=0,
+            bg="white"
+        )
+        self.close_btn.place(relx=0.95, rely=0.05, anchor=tkinter.CENTER)
+        self.close_btn.bind("<Button-1>", lambda e: self.close_class_menu())
+            
         #self.class_menu.pack()
 
     def go_To_Class(self, class_to_navigate):
@@ -412,6 +470,11 @@ class CampusMap:
 
         self.editEventPage.place(relx=.5, rely=.15, anchor="n", relheight=.8, relwidth=.5)
         self.set_boxes(event)
+        
+    def add_event(self):
+        new_event = Event("", "", "", "", "")
+        self.your_events.append(new_event)
+        self.edit_event(new_event)
 
     def set_boxes(self, event):
         self.event_name_enter.delete(0, tkinter.END)
