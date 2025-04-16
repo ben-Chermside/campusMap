@@ -123,13 +123,13 @@ class CampusMap:
             currClassLable = tkinter.Label(self.class_menu, text=your_events[i].description, font=("Times New Roman", 50, ""))
             self.__setattr__("class" + str(i) + "lable", currClassLable)
             currClassLable.grid(row=i, column=0, columnspan=5)
-            currClassLable.bind("<Button-1>", lambda interactEvent : self.selectedClass(your_events[i]))
+            currClassLable.bind("<Button-1>", lambda interactEvent, event=your_events[i]: self.selectedClass(event))
             curr_edit_lable = tkinter.Label(self.class_menu, image=self.edit_icon)
             curr_edit_lable.grid(row=i, column=6)
-            curr_edit_lable.bind("<Button-1>", lambda interactEvent : self.edit_event(your_events[i]))
+            curr_edit_lable.bind("<Button-1>", lambda interactEvent, event=your_events[i]: self.edit_event(event))
             curr_deleat_lable = tkinter.Label(self.class_menu, image=self.delete_icon)
             curr_deleat_lable.grid(row=i, column=7)
-            curr_deleat_lable.bind("<Button-1>", lambda interactEvent : self.pressed_deleat_class(your_events[i]))
+            curr_deleat_lable.bind("<Button-1>", lambda interactEvent, event=your_events[i]: self.pressed_deleat_class(event))
 
 
         #take me to my next event
