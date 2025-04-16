@@ -111,6 +111,7 @@ class CampusMap:
         self.ClassSelectedToDeleat = None#the last class that the user selected to deleat
         for i in range(4):
             currClassLable = tkinter.Label(self.class_menu, text=your_events[i].description, font=("Times New Roman", 50, ""))
+            self.__setattr__("class" + str(i) + "lable", currClassLable)
             currClassLable.grid(row=i, column=0, columnspan=5)
             currClassLable.bind("<Button-1>", lambda interactEvent : self.selectedClass(your_events[i]))
             curr_edit_lable = tkinter.Label(self.class_menu, image=self.edit_icon)
@@ -207,8 +208,13 @@ class CampusMap:
         self.class_menu.place_forget()
 
     def locations(self):
+        """
+        displays the list of diffrent classes(assumes not alredy displayed)
+        """
         self.close_submenu()
         self.class_menu.place(relx=.5, rely=.15, anchor=tkinter.N, relwidth=.6, relheight=.7)
+        for i in range(4):
+            self.__getattribute__("class" + str(i) + "lable").config(text=self.your_events[i].description)
         #self.class_menu.pack()
 
     def go_To_Class(self, class_to_navigate):
@@ -314,7 +320,7 @@ class CampusMap:
         )
         self.event_name_enter = tkinter.Entry(
             self.editEventPage,
-            width=30
+            #width=30
         )
         self.event_name_lable.grid(column=0, row=0)
         self.event_name_enter.grid(row=0, column=1)
@@ -328,7 +334,7 @@ class CampusMap:
         )
         self.event_bulding_enter = tkinter.Entry(
             self.editEventPage,
-            width=30
+            #width=30
         )
         self.event_bulding_lable.grid(column=0, row=1)
         self.event_bulding_enter.grid(row=1, column=1)
@@ -342,7 +348,7 @@ class CampusMap:
         )
         self.event_room_number_enter = tkinter.Entry(
             self.editEventPage,
-            width=30
+            #width=30
         )
         self.event_room_number_lable.grid(column=0, row=2)
         self.event_room_number_enter.grid(row=2, column=1)
@@ -356,11 +362,10 @@ class CampusMap:
         )
         self.event_time_enter = tkinter.Entry(
             self.editEventPage,
-            width=30
+            #width=30
         )
         self.event_time_lable.grid(column=0, row=3)
         self.event_time_enter.grid(row=3, column=1)
-
         
         self.event_weekday_lable = tkinter.Label(
             self.editEventPage,
@@ -370,13 +375,66 @@ class CampusMap:
         )
         self.event_weekday_enter = tkinter.Entry(
             self.editEventPage,
-            width=30
+            #width=30
         )
         self.event_weekday_lable.grid(column=0, row=4)
         self.event_weekday_enter.grid(row=4, column=1)
-        self.editEventPage.place(relx=.5, rely=.15, anchor="n", relheight=.7, relwidth=.5)
+
+        self.confirm_changes_button = tkinter.Button(
+        self.editEventPage,
+        text="confirm changes",
+        font=("Times New Roman", 40, ""),
+        borderwidth=6,
+        background="green",
+        command= lambda: self.update_event_info(event)
+        )
+        self.undo_changes_button = tkinter.Button(
+            self.editEventPage,
+            text="undo changes",
+            font=("Times New Roman", 40, ""),
+            borderwidth=6,
+            background="red",
+            command= lambda: self.set_boxes(event),
+        )
+        self.confirm_changes_button.grid(column=0, row=5)
+        self.undo_changes_button.grid(row=5, column=1)
+
+        self.editEventPage.place(relx=.5, rely=.15, anchor="n", relheight=.8, relwidth=.5)
+        self.set_boxes(event)
+
+    def set_boxes(self, event):
+        self.event_name_enter.delete(0, tkinter.END)
+        self.event_name_enter.insert(0, event.description)
+
+        self.event_bulding_enter.delete(0, tkinter.END)
+        self.event_bulding_enter.insert(0, event.location)
+
+        self.event_room_number_enter.delete(0, tkinter.END)
+        self.event_room_number_enter.insert(0, event.roomNumber)
+
+        self.event_time_enter.delete(0, tkinter.END)
+        self.event_time_enter.insert(0, event.time)
+
+        self.event_weekday_enter.delete(0, tkinter.END)
+        self.event_weekday_enter.insert(0, event.weekday)
+
+    def update_event_info(self, event):
+        """
+        called when the user updeste the info about a class
+        intended to update the info that is stored about that class
+        to whatever the user input
+        """
+        event.description = self.event_name_enter.get()
+        event.location = self.event_bulding_enter.get()
+        event.time = self.event_time_enter.get()
+        event.roomNumber = self.event_room_number_enter.get()
+        event.weekday = self.event_weekday_enter.get()
+        self.editEventPage.place_forget()
+        self.locations()
+
 
         
+
         
         
         
@@ -403,7 +461,7 @@ class CampusMap:
 class Event:#used for keeping track of information about a single event(class) in one place
     def __init__(self, description, location, time, roomNumber, weekDay):
         self.description = description
-        self.location = location
+        self.location = location #
         self.time = time
         self.roomNumber = roomNumber
         self.weekday = weekDay
