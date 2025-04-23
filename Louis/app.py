@@ -154,14 +154,14 @@ class CampusMap:
         self.deleat_class_confermation = tkinter.Frame(
             self.root,
             bg="white",
-            width=380,
+            width=200,
             height= 200,
         )
         self.deleat_class_confermation.place()
         self.deleat_class_confermation_text = tkinter.Label(
             self.deleat_class_confermation,
-            text="are your sure you want to delete this class?",
-            font=("Arial", 28, ""),
+            text="Are you sure you want to delete this class?",
+            font=("Arial", 20, ""),
         )
         self.deleat_class_confermation_text.grid(row=0, column=0)
         self.deleat_class_confermation_yes_button = tkinter.Button(
@@ -183,7 +183,7 @@ class CampusMap:
         self.editEventPage = tkinter.Frame(
             self.root,
             #self.root,
-            bg="black",
+            bg="white",
             # width=380,
             # height= 200,
         )
@@ -236,19 +236,29 @@ class CampusMap:
         #has to rebuild menu so new added classes are visible
         for x in self.class_menu.winfo_children():
             x.destroy()
-        
+        #re-add background
+        self.class_menu_bg = tkinter.Label(
+            self.class_menu,
+            image=self.class_menu_img,
+            bd=0
+        )
+        self.class_menu_bg.place(x=0, y=0, relwidth=1, relheight=1)
         #create scroll canvas for classes
         canvas = tkinter.Canvas(self.class_menu, borderwidth=0)
         scroll_frame = tkinter.Frame(canvas, bg="white")
         scroll_frame.columnconfigure(0, weight=1)
+
         scrollbar = tkinter.Scrollbar(self.class_menu, orient="vertical", command=canvas.yview)
         canvas.configure(yscrollcommand=scrollbar.set)
+
         canvas_window = canvas.create_window((0, 0), window=scroll_frame, anchor="nw")
         canvas.bind("<Configure>", lambda e: canvas.itemconfig(canvas_window, width=e.width))
         scroll_frame.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
         scroll_frame.bind_all("<MouseWheel>", lambda e: canvas.yview_scroll(int(-1 * (e.delta / 120)), "units"))
+        
         canvas.pack(side="left", fill="both", expand=True)
         scrollbar.pack(side="right", fill="y")
+
         
         self.close_submenu()
         #self.class_menu.place(relx=.5, rely=.15, anchor=tkinter.N, relwidth=.6, relheight=.7)
@@ -398,75 +408,85 @@ class CampusMap:
         self.event_name_lable = tkinter.Label(
             self.editEventPage,
             text="Name of Event:",
-            font=("Arial", 24, ""),
+            font=("Arial", 18, ""),
+            anchor="w",
             borderwidth=6,
+            bg="white"
         )
         self.event_name_enter = tkinter.Entry(
             self.editEventPage,
-            #width=30
+            width=18
         )
-        self.event_name_lable.grid(column=0, row=0)
+        self.event_name_lable.grid(column=0, row=0,sticky="w")
         self.event_name_enter.grid(row=0, column=1)
 
 
         self.event_bulding_lable = tkinter.Label(
             self.editEventPage,
-            text="Bulding:",
-            font=("Arial", 24, ""),
+            text="Building:",
+            font=("Arial",18, ""),
+            anchor="w",
             borderwidth=6,
+            bg="white"
         )
         self.event_bulding_enter = tkinter.Entry(
             self.editEventPage,
-            #width=30
+            width=18
         )
-        self.event_bulding_lable.grid(column=0, row=1)
+        self.event_bulding_lable.grid(column=0, row=1, sticky="w")
         self.event_bulding_enter.grid(row=1, column=1)
 
         
         self.event_room_number_lable = tkinter.Label(
             self.editEventPage,
             text="Room number:",
-            font=("Arial", 24, ""),
+            font=("Arial",18, ""),
+            anchor="w",
             borderwidth=6,
+            bg="white"
         )
         self.event_room_number_enter = tkinter.Entry(
             self.editEventPage,
-            #width=30
+            width=18
         )
-        self.event_room_number_lable.grid(column=0, row=2)
+        self.event_room_number_lable.grid(column=0, row=2, sticky="w")
         self.event_room_number_enter.grid(row=2, column=1)
 
         
         self.event_time_lable = tkinter.Label(
             self.editEventPage,
             text="Time:",
-            font=("Arial", 24, ""),
+            font=("Arial", 18, ""),
+            anchor="w",
             borderwidth=6,
+            bg="white"
         )
         self.event_time_enter = tkinter.Entry(
             self.editEventPage,
-            #width=30
+            width=18
         )
-        self.event_time_lable.grid(column=0, row=3)
+        self.event_time_lable.grid(column=0, row=3, sticky="w")
         self.event_time_enter.grid(row=3, column=1)
         
         self.event_weekday_lable = tkinter.Label(
             self.editEventPage,
             text="Day of week:",
-            font=("Arial", 24, ""),
+            font=("Arial", 18, ""),
+            anchor="w",
             borderwidth=6,
+            bg="white"
         )
         self.event_weekday_enter = tkinter.Entry(
             self.editEventPage,
-            #width=30
+            width=18
         )
-        self.event_weekday_lable.grid(column=0, row=4)
+        self.event_weekday_lable.grid(column=0, row=4, sticky="w")
         self.event_weekday_enter.grid(row=4, column=1)
 
         self.confirm_changes_button = tkinter.Button(
         self.editEventPage,
         text="confirm changes",
-        font=("Arial", 28, ""),
+        font=("Arial", 20, ""),
         borderwidth=6,
         background="green",
         command= lambda: self.update_event_info(event)
@@ -474,7 +494,7 @@ class CampusMap:
         self.undo_changes_button = tkinter.Button(
             self.editEventPage,
             text="undo changes",
-            font=("Arial", 28, ""),
+            font=("Arial", 20, ""),
             borderwidth=6,
             background="red",
             command= lambda: self.set_boxes(event),
@@ -482,7 +502,8 @@ class CampusMap:
         self.confirm_changes_button.grid(column=0, row=5)
         self.undo_changes_button.grid(row=5, column=1)
 
-        self.editEventPage.place(relx=.5, rely=.15, anchor="n", relheight=.8, relwidth=.5)
+        self.editEventPage.place(relx=.5, rely=.15, anchor="n", width=380, height=488)
+
         self.set_boxes(event)
         
     def add_event(self):
