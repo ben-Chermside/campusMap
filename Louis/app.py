@@ -13,6 +13,7 @@ class CampusMap:
         self.root = tkinter.Tk()
         self.root.geometry(f"{self.width}x{self.height}")
         self.submenu_visible = False
+        self.listbox_has_focus = False
         self.root.bind_all("<Button-1>", lambda e: hasattr(e.widget, "focus_set") and e.widget.focus_set())
 
         self.load_assets()
@@ -32,8 +33,8 @@ class CampusMap:
         self.navbar_img= ImageTk.PhotoImage(Image.open("nav_bar.png"))
         self.search_bar_img = ImageTk.PhotoImage(Image.open("search_bar.png"))
         self.class_menu_img = ImageTk.PhotoImage(Image.open("class_menu.png"))
-        self.edit_icon = ImageTk.PhotoImage(Image.open("edit_icon.png"))
-        self.delete_icon = ImageTk.PhotoImage(Image.open("delete_icon.png"))
+        self.edit_icon = ImageTk.PhotoImage(Image.open("edit_icon.png").resize((40, 40), Image.Resampling.LANCZOS))
+        self.delete_icon = ImageTk.PhotoImage(Image.open("delete_icon.png").resize((33, 40), Image.Resampling.LANCZOS))
         self.navbar_x = ImageTk.PhotoImage(Image.open("navbar_x.png"))
 
     def setup_map(self):
@@ -106,6 +107,13 @@ class CampusMap:
             width = self.class_menu_img.width(),
             height = self.class_menu_img.height(),
         )
+
+        self.class_menu_bg=tkinter.Label(
+            self.class_menu,
+            image=self.class_menu_img,
+            bd=0
+        )
+        self.class_menu_bg.place(relx=0.5, rely=0.15, anchor=tkinter.N)
         
         
         #class menue classes
@@ -152,21 +160,21 @@ class CampusMap:
         self.deleat_class_confermation.place()
         self.deleat_class_confermation_text = tkinter.Label(
             self.deleat_class_confermation,
-            text="are your sure you want to DELEAT this class?",
-            font=("Times New Roman", 50, ""),
+            text="are your sure you want to delete this class?",
+            font=("Arial", 28, ""),
         )
         self.deleat_class_confermation_text.grid(row=0, column=0)
         self.deleat_class_confermation_yes_button = tkinter.Button(
             self.deleat_class_confermation,
             text="yes",
-            font=("Times New Roman", 50, ""),
+            font=("Arial", 28, ""),
             command= lambda: self.deleat_class()
         )
         self.deleat_class_confermation_yes_button.grid(row=1, column=0)
         self.deleat_class_confermation_no_button = tkinter.Button(
             self.deleat_class_confermation,
             text="no",
-            font=("Times New Roman", 50, ""),
+            font=("Arial", 28, ""),
             command = lambda: self.close_confermation_window()
         )
         self.deleat_class_confermation_no_button.grid(row=2, column=0)
@@ -230,7 +238,7 @@ class CampusMap:
             x.destroy()
         
         #create scroll canvas for classes
-        canvas = tkinter.Canvas(self.class_menu, borderwidth=0, bg="white", highlightthickness=0)
+        canvas = tkinter.Canvas(self.class_menu, borderwidth=0)
         scroll_frame = tkinter.Frame(canvas, bg="white")
         scroll_frame.columnconfigure(0, weight=1)
         scrollbar = tkinter.Scrollbar(self.class_menu, orient="vertical", command=canvas.yview)
@@ -243,18 +251,19 @@ class CampusMap:
         scrollbar.pack(side="right", fill="y")
         
         self.close_submenu()
-        self.class_menu.place(relx=.5, rely=.15, anchor=tkinter.N, relwidth=.6, relheight=.7)
+        #self.class_menu.place(relx=.5, rely=.15, anchor=tkinter.N, relwidth=.6, relheight=.7)
+        self.class_menu.place(relx=.5, rely=.15, anchor=tkinter.N, width=380, height=488)
         tkinter.Label(scroll_frame, text="", bg="white").grid(row=0, column=0, columnspan=8, pady=(30, 5)) #blank row for padding at top
         for i, event in enumerate(self.your_events):
             #class button
             label = tkinter.Label(
                 scroll_frame,
                 text=event.description,
-                font=("Times New Roman", 50, ""),
+                font=("Arial", 24, ""),
                 bg="white",
                 anchor="w"
             )
-            label.grid(row=i+1, column=0, columnspan=5, sticky="ew", padx=5, pady=2)
+            label.grid(row=i+1, column=0, columnspan=5, sticky="ew", padx=5, pady=15)
             label.bind("<Button-1>", lambda e, ev=event: self.selectedClass(ev))
 
             #edit button
@@ -389,7 +398,7 @@ class CampusMap:
         self.event_name_lable = tkinter.Label(
             self.editEventPage,
             text="Name of Event:",
-            font=("Times New Roman", 40, ""),
+            font=("Arial", 24, ""),
             borderwidth=6,
         )
         self.event_name_enter = tkinter.Entry(
@@ -403,7 +412,7 @@ class CampusMap:
         self.event_bulding_lable = tkinter.Label(
             self.editEventPage,
             text="Bulding:",
-            font=("Times New Roman", 40, ""),
+            font=("Arial", 24, ""),
             borderwidth=6,
         )
         self.event_bulding_enter = tkinter.Entry(
@@ -417,7 +426,7 @@ class CampusMap:
         self.event_room_number_lable = tkinter.Label(
             self.editEventPage,
             text="Room number:",
-            font=("Times New Roman", 40, ""),
+            font=("Arial", 24, ""),
             borderwidth=6,
         )
         self.event_room_number_enter = tkinter.Entry(
@@ -431,7 +440,7 @@ class CampusMap:
         self.event_time_lable = tkinter.Label(
             self.editEventPage,
             text="Time:",
-            font=("Times New Roman", 40, ""),
+            font=("Arial", 24, ""),
             borderwidth=6,
         )
         self.event_time_enter = tkinter.Entry(
@@ -444,7 +453,7 @@ class CampusMap:
         self.event_weekday_lable = tkinter.Label(
             self.editEventPage,
             text="Day of week:",
-            font=("Times New Roman", 40, ""),
+            font=("Arial", 24, ""),
             borderwidth=6,
         )
         self.event_weekday_enter = tkinter.Entry(
@@ -457,7 +466,7 @@ class CampusMap:
         self.confirm_changes_button = tkinter.Button(
         self.editEventPage,
         text="confirm changes",
-        font=("Times New Roman", 40, ""),
+        font=("Arial", 28, ""),
         borderwidth=6,
         background="green",
         command= lambda: self.update_event_info(event)
@@ -465,7 +474,7 @@ class CampusMap:
         self.undo_changes_button = tkinter.Button(
             self.editEventPage,
             text="undo changes",
-            font=("Times New Roman", 40, ""),
+            font=("Arial", 28, ""),
             borderwidth=6,
             background="red",
             command= lambda: self.set_boxes(event),
