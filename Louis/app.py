@@ -114,14 +114,15 @@ class CampusMap:
             bd=0
         )
         self.class_menu_bg.place(relx=0.5, rely=0.15, anchor=tkinter.N)
+
         
         
         #class menue classes
         your_events = [
-            Event("CS 150 King 101", "King Building", "9:00", "101", "mwf"),
-            Event("CS 000 King 101", "King Building", "9:00", "101", "tt"),
-            Event("Math 210 peters 232", "peters Hall", "10:00", "232", "mwf"),
-            Event("History 108 Peters Hall 102", "peters Hall", "14:00", "102", "mwf")
+            Event("CS 150", "King Building", "9:00", "101", "MWF"),
+            Event("CS 000", "King Building", "9:00", "101", "TT"),
+            Event("Math 210", "Peters Hall", "10:00", "232", "MWF"),
+            Event("History 108", "Peters Hall", "14:00", "102", "MWF")
         ]#used list instead of touple (original ver) to make easier to add
         self.your_events = your_events#a list of events that you have
         self.ClassSelectedToDeleat = None#the last class that the user selected to deleat
@@ -261,30 +262,47 @@ class CampusMap:
 
         
         self.close_submenu()
+        
         #self.class_menu.place(relx=.5, rely=.15, anchor=tkinter.N, relwidth=.6, relheight=.7)
         self.class_menu.place(relx=.5, rely=.15, anchor=tkinter.N, width=380, height=488)
         tkinter.Label(scroll_frame, text="", bg="white").grid(row=0, column=0, columnspan=8, pady=(30, 5)) #blank row for padding at top
         for i, event in enumerate(self.your_events):
-            #class button
-            label = tkinter.Label(
+            row_index = i * 2 + 1  # two rows per event
+
+            # Class name
+            class_name_label = tkinter.Label(
                 scroll_frame,
                 text=event.description,
-                font=("Arial", 24, ""),
+                font=("Arial", 20, "bold"),
                 bg="white",
                 anchor="w"
             )
-            label.grid(row=i+1, column=0, columnspan=5, sticky="ew", padx=5, pady=15)
-            label.bind("<Button-1>", lambda e, ev=event: self.selectedClass(ev))
+            class_name_label.grid(row=row_index, column=0, columnspan=5, sticky="w", padx=10, pady=(15, 0))
+            class_name_label.bind("<Button-1>", lambda e, ev=event: self.selectedClass(ev))
 
-            #edit button
+            # Class details 
+            details_text = f"{event.location} {event.roomNumber} • {event.weekday.upper()} @ {event.time}"
+            class_details_label = tkinter.Label(
+                scroll_frame,
+                text=details_text,
+                font=("Arial", 14),
+                bg="white",
+                fg="gray20",
+                anchor="w"
+            )
+            class_details_label.grid(row=row_index + 1, column=0, columnspan=5, sticky="w", padx=20, pady=(0, 10))
+            class_details_label.bind("<Button-1>", lambda e, ev=event: self.selectedClass(ev))
+
+            # Edit button 
             edit_btn = tkinter.Label(scroll_frame, image=self.edit_icon, bg="white")
-            edit_btn.grid(row=i+1, column=6, padx=5)
+            edit_btn.grid(row=row_index, column=6, rowspan=2, sticky="n", padx=5, pady=(15, 0))
             edit_btn.bind("<Button-1>", lambda e, ev=event: self.edit_event(ev))
 
-            #deleat button
+            # Delete button
             delete_btn = tkinter.Label(scroll_frame, image=self.delete_icon, bg="white")
-            delete_btn.grid(row=i+1, column=7, padx=5)
+            delete_btn.grid(row=row_index, column=7, rowspan=2, sticky="n", padx=5, pady=(15, 0))
             delete_btn.bind("<Button-1>", lambda e, ev=event: self.pressed_deleat_class(ev))
+
             
         #add location button
         self.add_location_button = tkinter.Button(
@@ -297,6 +315,19 @@ class CampusMap:
         )
         self.add_location_button.place(relx=0.5, rely=0.95, anchor="center")
         
+
+            
+        #self.class_menu.pack()
+        header_label = tkinter.Label(
+            self.class_menu,
+            text="My Locations",
+            font=("Arial", 24, "bold"),
+            width=388,
+            bg="white",
+            fg="black"
+)       
+        header_label.place(relx=0.5, rely=0.05, anchor="n")
+
         #close menu button
         self.close_btn = tkinter.Label(
             self.class_menu,
@@ -306,8 +337,6 @@ class CampusMap:
         )
         self.close_btn.place(relx=0.95, rely=0.05, anchor=tkinter.CENTER)
         self.close_btn.bind("<Button-1>", lambda e: self.close_class_menu())
-            
-        #self.class_menu.pack()
 
     def go_To_Class(self, class_to_navigate):
         print("Start Navigation for Next Event", class_to_navigate)
