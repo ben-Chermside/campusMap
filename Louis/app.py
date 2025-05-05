@@ -28,9 +28,9 @@ class CampusMap:
         self.locations_btn_img = ImageTk.PhotoImage(Image.open("my_locations.png"))
         self.next_btn_img = ImageTk.PhotoImage(Image.open("next_event.png"))
         self.search_bar_img= ImageTk.PhotoImage(Image.open("search_bar.png"))
-        self.navigation_img= ImageTk.PhotoImage(Image.open("navigation.png"))
         self.marker_img= ImageTk.PhotoImage(Image.open("self_marker.png"))
-        self.navbar_img= ImageTk.PhotoImage(Image.open("nav_bar.png"))
+        self.king_navbar= ImageTk.PhotoImage(Image.open("nav_bar.png"))
+        self.peters_navbar=ImageTk.PhotoImage(Image.open("navbar_peter.png"))
         self.search_bar_img = ImageTk.PhotoImage(Image.open("search_bar.png"))
         self.class_menu_img = ImageTk.PhotoImage(Image.open("class_menu.png"))
         self.edit_icon = ImageTk.PhotoImage(Image.open("edit_icon.png").resize((40, 40), Image.Resampling.LANCZOS))
@@ -50,6 +50,34 @@ class CampusMap:
         self.valid_locations = ["Barrows Hall", "Peters Hall","Kade Haus", "Keep Cottage", "Khan Hall", "Knowlton", "King Building"]
         self.marker=self.map_widget.set_marker(41.295728, -82.221735, icon=self.marker_img)
 
+    def under_construction(self):
+        # Create popup frame
+        self.under_construction_popup = tkinter.Frame(
+            self.root,
+            bg="white",
+            width=300,
+            height=200,
+            highlightthickness=2,
+            highlightbackground="black"
+        )
+        self.under_construction_popup.place(relx=0.5, rely=0.5, anchor="center")
+
+        label = tkinter.Label(
+            self.under_construction_popup,
+            text="Under Construction",
+            font=("Arial", 18, "bold"),
+            bg="white"
+        )
+        label.pack(pady=30)
+
+        close_button = tkinter.Label(
+            self.under_construction_popup,
+            image=self.close_btn_img,
+            bd=0,
+            bg="white"
+        )
+        close_button.pack()
+        close_button.bind("<Button-1>", lambda e: self.under_construction_popup.place_forget())
 
 
     def create_ui(self):
@@ -341,11 +369,11 @@ class CampusMap:
     def go_To_Class(self, class_to_navigate):
         print("Start Navigation for Next Event", class_to_navigate)
         #TODO buld navagation feture
-        self.navigate() #goes to placeholder navigation
+        self.navigate(class_to_navigate.location, class_to_navigate.description, class_to_navigate.roomNumber) #goes to placeholder navigation
 
     def next_class(self):
         self.close_submenu()
-        self.go_To_Class(None)#TODO buld and store what the "next class" is somewhere
+        self.navigate("King Building", "CS150", "101")
 
     def selectedClass(self, chosesClass):#for when the user selects a spsific class they wish to travel to
         self.close_class_menu(show_menu_button=False) #stops from reappearing hamburger menu too earlier
@@ -383,9 +411,8 @@ class CampusMap:
             self.searchbox.insert(0, selected_text)
             self.listbox.place_forget()
             self.map_widget.focus_set()
-            if selected_text == "King Building":
-                self.navigate()
-            #else: display work in progress screen
+            self.navigate(selected_text, selected_text, "")
+            
 
     def check(self, e):
         typed= self.searchbox.get()
@@ -579,28 +606,46 @@ class CampusMap:
 
         
 
-    def navigate(self):
+    def navigate(self, location, label, number):
         self.search_bar_frame.place_forget()
-        self.king=self.map_widget.set_marker(41.29225950788716, -82.22067847961983, text="King Building")
-        self.map_widget.set_position(41.2939542, -82.2211778)
-        self.map_widget.set_zoom(17)
-        self.path_1 = self.map_widget.set_path([self.marker.position, (41.2954777, -82.2214728), (41.2953729, -82.2215587), (41.2937607, -82.2215265), (41.2934383, -82.2210651), (41.2924307, -82.2211081), self.king.position,])
+        if location == "King Building":
+            self.navbar_img=self.king_navbar
+            if number != "":
+                self.dest=self.map_widget.set_marker(41.29225950788716, -82.22067847961983, text=label + " - King " + number)
+            else:
+                self.dest=self.map_widget.set_marker(41.29225950788716, -82.22067847961983, text=label)
+            self.map_widget.set_position(41.2939542, -82.2211778)
+            self.map_widget.set_zoom(17)
+            self.path_1 = self.map_widget.set_path([self.marker.position, (41.2954777, -82.2214728), (41.2953729, -82.2215587), (41.2937607, -82.2215265), (41.2934383, -82.2210651), (41.2924307, -82.2211081), self.dest.position,])
+        elif location == "Peters Hall":
+            self.navbar_img=self.peters_navbar
+            if number != "":
+                self.dest = self.map_widget.set_marker(41.2930514, -82.2207326, text=label + " - Peters " + number)
+            else:
+                self.dest = self.map_widget.set_marker(41.2930514, -82.2207326, text=label)
+            self.map_widget.set_position(41.2945104, -82.2210759)
+            self.map_widget.set_zoom(17)
+            self.path_1 = self.map_widget.set_path([self.marker.position, (41.2954777, -82.2214728), (41.2953729, -82.2215587), (41.2937607, -82.2215265), (41.2934383, -82.2210651), (41.2929627, -82.2210759), self.dest.position,])
+        else:
+            self.under_construction()
+            self.close_navigation()
         self.navbar_frame=tkinter.Frame(self.root, width=400, height=200, bg="white")
+        #add invisible close button (x is already in image)
         self.navbar=tkinter.Label(
             self.navbar_frame,
             image=self.navbar_img,
             bd=0
         )
         self.navbar.pack()
-        #add invisible close button (x is already in image)
         self.nav_close_btn = tkinter.Label(
             self.navbar_frame,
             image=self.navbar_x,
-            cursor="hand2"
         )
         self.nav_close_btn.place(relx=0.85, rely=0.5, anchor="center")
         self.nav_close_btn.bind("<Button-1>", lambda e: self.close_navigation())
         self.navbar_frame.place(relx=0.5, rely=0.1, anchor=tkinter.CENTER)
+
+
 
 
     #cleans up/closes sample navigation
@@ -608,8 +653,8 @@ class CampusMap:
         self.navbar_frame.destroy()
         if hasattr(self, "path_1"):
             self.path_1.delete()
-        if hasattr(self, "king"):
-            self.king.delete()
+        if hasattr(self, "dest"):
+            self.dest.delete()
         self.menu.place(x=10, y=610)
         self.search_bar_frame.place(relx=0.5, rely=0.1, anchor=tkinter.CENTER)
 
