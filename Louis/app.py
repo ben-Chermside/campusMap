@@ -610,7 +610,7 @@ class CampusMap:
     def navigate(self, location, label, number):
         self.search_bar_frame.place_forget()
         navigate = True
-        if location == "King Building":
+        if "King" in location:
             self.navbar_img=self.king_navbar
             if number != "":
                 self.dest=self.map_widget.set_marker(41.29225950788716, -82.22067847961983, text=label + " - King " + number)
@@ -619,7 +619,7 @@ class CampusMap:
             self.map_widget.set_position(41.2939542, -82.2211778)
             self.map_widget.set_zoom(17)
             self.path_1 = self.map_widget.set_path([self.marker.position, (41.2954777, -82.2214728), (41.2953729, -82.2215587), (41.2937607, -82.2215265), (41.2934383, -82.2210651), (41.2924307, -82.2211081), self.dest.position,])
-        elif location == "Peters Hall":
+        elif "Peters" in location:
             self.navbar_img=self.peters_navbar
             if number != "":
                 self.dest = self.map_widget.set_marker(41.2930514, -82.2207326, text=label + " - Peters " + number)
@@ -628,7 +628,7 @@ class CampusMap:
             self.map_widget.set_position(41.2945104, -82.2210759)
             self.map_widget.set_zoom(17)
             self.path_1 = self.map_widget.set_path([self.marker.position, (41.2954777, -82.2214728), (41.2953729, -82.2215587), (41.2937607, -82.2215265), (41.2934383, -82.2210651), (41.2929627, -82.2210759), self.dest.position,])
-        elif location == "Talcott Hall":
+        elif "Talcott" in location:
             self.navbar_img=self.talcott_navbar
             self.dest = self.map_widget.set_marker(41.2914643, -82.2205346, text=label)
             self.map_widget.set_position(41.2939453, -82.2212714)
