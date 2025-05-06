@@ -31,6 +31,7 @@ class CampusMap:
         self.marker_img= ImageTk.PhotoImage(Image.open("self_marker.png"))
         self.king_navbar= ImageTk.PhotoImage(Image.open("nav_bar.png"))
         self.peters_navbar=ImageTk.PhotoImage(Image.open("navbar_peter.png"))
+        self.talcott_navbar=ImageTk.PhotoImage(Image.open("navbar_talcott.png"))
         self.search_bar_img = ImageTk.PhotoImage(Image.open("search_bar.png"))
         self.class_menu_img = ImageTk.PhotoImage(Image.open("class_menu.png"))
         self.edit_icon = ImageTk.PhotoImage(Image.open("edit_icon.png").resize((40, 40), Image.Resampling.LANCZOS))
@@ -47,7 +48,7 @@ class CampusMap:
         self.map_widget.pack(fill="both", expand=True)
         self.map_widget.set_position(41.295741, -82.22184)
         self.map_widget.set_zoom(18)
-        self.valid_locations = ["Barrows Hall", "Peters Hall","Kade Haus", "Keep Cottage", "Khan Hall", "Knowlton", "King Building"]
+        self.valid_locations = ["Barrows Hall", "Peters Hall","Kade Haus", "Keep Cottage", "Khan Hall", "Knowlton", "King Building", "Talcott Hall"]
         self.marker=self.map_widget.set_marker(41.295728, -82.221735, icon=self.marker_img)
 
     def under_construction(self):
@@ -148,7 +149,7 @@ class CampusMap:
         #class menue classes
         your_events = [
             Event("CS 150", "King Building", "9:00", "101", "MWF"),
-            Event("CS 000", "King Building", "9:00", "101", "TT"),
+            Event("ENGL 140", "King Building", "13:00", "106", "TT"),
             Event("Math 210", "Peters Hall", "10:00", "232", "MWF"),
             Event("History 108", "Peters Hall", "14:00", "102", "MWF")
         ]#used list instead of touple (original ver) to make easier to add
@@ -608,6 +609,7 @@ class CampusMap:
 
     def navigate(self, location, label, number):
         self.search_bar_frame.place_forget()
+        navigate = True
         if location == "King Building":
             self.navbar_img=self.king_navbar
             if number != "":
@@ -626,24 +628,32 @@ class CampusMap:
             self.map_widget.set_position(41.2945104, -82.2210759)
             self.map_widget.set_zoom(17)
             self.path_1 = self.map_widget.set_path([self.marker.position, (41.2954777, -82.2214728), (41.2953729, -82.2215587), (41.2937607, -82.2215265), (41.2934383, -82.2210651), (41.2929627, -82.2210759), self.dest.position,])
+        elif location == "Talcott Hall":
+            self.navbar_img=self.talcott_navbar
+            self.dest = self.map_widget.set_marker(41.2914643, -82.2205346, text=label)
+            self.map_widget.set_position(41.2939453, -82.2212714)
+            self.map_widget.set_zoom(17)
+            self.path_1 = self.map_widget.set_path([self.marker.position, (41.2954777, -82.2214728), (41.2953729, -82.2215587), (41.2937607, -82.2215265), (41.2934383, -82.2210651), (41.2916336, -82.2211569), (41.2916094, -82.2209101), self.dest.position,])
         else:
+            navigate=False
             self.under_construction()
             self.close_navigation()
-        self.navbar_frame=tkinter.Frame(self.root, width=400, height=200, bg="white")
-        #add invisible close button (x is already in image)
-        self.navbar=tkinter.Label(
-            self.navbar_frame,
-            image=self.navbar_img,
-            bd=0
-        )
-        self.navbar.pack()
-        self.nav_close_btn = tkinter.Label(
-            self.navbar_frame,
-            image=self.navbar_x,
-        )
-        self.nav_close_btn.place(relx=0.85, rely=0.5, anchor="center")
-        self.nav_close_btn.bind("<Button-1>", lambda e: self.close_navigation())
-        self.navbar_frame.place(relx=0.5, rely=0.1, anchor=tkinter.CENTER)
+        if navigate:
+            self.navbar_frame=tkinter.Frame(self.root, width=400, height=200, bg="white")
+            #add invisible close button (x is already in image)
+            self.navbar=tkinter.Label(
+                self.navbar_frame,
+                image=self.navbar_img,
+                bd=0
+            )
+            self.navbar.pack()
+            self.nav_close_btn = tkinter.Label(
+                self.navbar_frame,
+                image=self.navbar_x,
+            )
+            self.nav_close_btn.place(relx=0.8, rely=0.5, anchor="center")
+            self.nav_close_btn.bind("<Button-1>", lambda e: self.close_navigation())
+            self.navbar_frame.place(relx=0.5, rely=0.1, anchor=tkinter.CENTER)
 
 
 
